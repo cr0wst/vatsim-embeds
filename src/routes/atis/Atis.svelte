@@ -15,7 +15,7 @@
 		<p class="text-4xl font-bold text-slate-500">{atis.code}</p>
 		<p class="text-sm font-mono text-white">{atis.frequency}</p>
 	</div>
-	<div class="min-h-24 p-2 bg-slate-700 m-1 text-white font-mono text-justify h-full">
+	<div class="min-h-24 w-full p-2 bg-slate-700 m-1 text-white font-mono text-justify h-full">
 		{atis.text}
 	</div>
 </div>
