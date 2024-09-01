@@ -55,7 +55,9 @@
 	{#if weather && weather.length > 0}
 		{#key currentIndex}
 			<div in:slide={{ duration: 200 }} out:slide={{ duration: 200 }}>
-				<Atis atis={weather.filter((w) => w.atis)[currentIndex].atis} />
+				{#if weather[currentIndex] && weather[currentIndex].atis}
+					<Atis atis={weather[currentIndex].atis} />
+				{/if}
 			</div>
 		{/key}
 	{:else}
