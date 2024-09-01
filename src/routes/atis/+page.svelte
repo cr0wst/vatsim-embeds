@@ -9,6 +9,7 @@
 	let intervalId: any;
 	let fetchIntervalId: any;
 	let intervalDuration = 10000; // Default interval duration in milliseconds
+	let showAll = false; // Default to not showing all ATIS components at once
 
 	async function fetchWeatherData(ids: string) {
 		weather = await fetch(`/api/wx?ids=${ids}`).then((res) => res.json());
@@ -40,9 +41,17 @@
 		// Get the ids from query parameter or use a default value
 		const idsParam = params.get('ids') || 'KCVG';
 
+		// Check if showAll parameter is set to true
+		const showAllParam = params.get('showAll');
+		showAll = showAllParam === 'true';
+
 		// Start the fetching and cycling processes
 		startFetching(idsParam);
-		startCycle();
+
+		// Start the cycling process only if showAll is false
+		if (!showAll) {
+			startCycle();
+		}
 	});
 
 	onDestroy(() => {
@@ -53,13 +62,25 @@
 
 <div class="w-full">
 	{#if weather && weather.length > 0}
-		{#key currentIndex}
-			<div in:slide={{ duration: 200 }} out:slide={{ duration: 200 }}>
-				{#if weather[currentIndex] && weather[currentIndex].atis}
-					<Atis atis={weather[currentIndex].atis} />
+		{#if showAll}
+			<!-- Show all ATIS components stacked -->
+			{#each weather as wx (wx.atis.callsign)}
+				{#if wx.atis}
+					<div class="my-2">
+						<Atis atis={wx.atis} />
+					</div>
 				{/if}
-			</div>
-		{/key}
+			{/each}
+		{:else}
+			<!-- Show ATIS components with animation, one at a time -->
+			{#key currentIndex}
+				<div in:slide={{ duration: 200 }} out:slide={{ duration: 200 }}>
+					{#if weather[currentIndex] && weather[currentIndex].atis}
+						<Atis atis={weather[currentIndex].atis} />
+					{/if}
+				</div>
+			{/key}
+		{/if}
 	{:else}
 		<p>No ATIS data available.</p>
 	{/if}
