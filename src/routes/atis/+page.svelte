@@ -24,7 +24,7 @@
 		fetchWeatherData(ids);
 		fetchIntervalId = setInterval(() => {
 			fetchWeatherData(ids);
-		}, 5000); // Fetch new data every 30 seconds
+		}, 30000); // Fetch new data every 30 seconds
 	}
 
 	onMount(() => {
