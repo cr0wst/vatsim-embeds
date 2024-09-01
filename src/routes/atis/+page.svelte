@@ -13,6 +13,7 @@
 
 	async function fetchWeatherData(ids: string) {
 		weather = await fetch(`/api/wx?ids=${ids}`).then((res) => res.json());
+		weather = weather.filter((wx: any) => wx.atis);
 	}
 
 	function startCycle() {
