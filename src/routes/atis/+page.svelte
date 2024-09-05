@@ -4,7 +4,7 @@
 	import { page } from '$app/stores';
 	import Atis from './Atis.svelte';
 
-	let weather: any = null;
+	let atises: any[] = [];
 	let currentIndex = 0;
 	let intervalId: any;
 	let fetchIntervalId: any;
@@ -12,13 +12,12 @@
 	let showAll = false; // Default to not showing all ATIS components at once
 
 	async function fetchWeatherData(ids: string) {
-		weather = await fetch(`/api/wx?ids=${ids}`).then((res) => res.json());
-		weather = weather.filter((wx: any) => wx.atis);
+		atises = await fetch(`/api/atis?ids=${ids}`).then((res) => res.json());
 	}
 
 	function startCycle() {
 		intervalId = setInterval(() => {
-			currentIndex = (currentIndex + 1) % weather.length;
+			currentIndex = (currentIndex + 1) % atises.length;
 		}, intervalDuration);
 	}
 
@@ -26,7 +25,7 @@
 		fetchWeatherData(ids);
 		fetchIntervalId = setInterval(() => {
 			fetchWeatherData(ids);
-		}, 30000); // Fetch new data every 30 seconds
+		}, 15000); // Fetch new data every 15 seconds
 	}
 
 	onMount(() => {
@@ -62,13 +61,13 @@
 </script>
 
 <div class="w-full">
-	{#if weather && weather.length > 0}
+	{#if atises && atises.length > 0}
 		{#if showAll}
 			<!-- Show all ATIS components stacked -->
-			{#each weather as wx (wx.atis.callsign)}
-				{#if wx.atis}
+			{#each atises as wx (wx.callsign)}
+				{#if wx}
 					<div class="my-2">
-						<Atis atis={wx.atis} />
+						<Atis atis={wx} />
 					</div>
 				{/if}
 			{/each}
@@ -76,8 +75,8 @@
 			<!-- Show ATIS components with animation, one at a time -->
 			{#key currentIndex}
 				<div in:slide={{ duration: 200 }} out:slide={{ duration: 200 }}>
-					{#if weather[currentIndex] && weather[currentIndex].atis}
-						<Atis atis={weather[currentIndex].atis} />
+					{#if atises[currentIndex] && atises[currentIndex]}
+						<Atis atis={atises[currentIndex]} />
 					{/if}
 				</div>
 			{/key}
