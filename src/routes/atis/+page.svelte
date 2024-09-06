@@ -12,7 +12,13 @@
 	let showAll = false; // Default to not showing all ATIS components at once
 
 	async function fetchWeatherData(ids: string) {
-		atises = await fetch(`/api/atis?ids=${ids}`).then((res) => res.json());
+		const response = await fetch(`/api/atis?ids=${ids}`).then((res) => res.json());
+		// If the response length is smaller than the current atises length, reset the currentIndex
+		if (atises.length > 0 && atises.length > response.length) {
+			currentIndex = 0;
+		}
+
+		atises = response;
 	}
 
 	function startCycle() {
